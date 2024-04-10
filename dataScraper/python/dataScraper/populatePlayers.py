@@ -67,6 +67,15 @@ cur.execute("insert into players values (50, 'melodycastruita', 'Melody Castruit
 cur.execute("insert into players values (51, 'madisontomaino', 'Madison Tomaino', 'FPO', 60798)")
 cur.execute("insert into players values (52, 'nathaliestrom', 'Nathalie Ortiz', 'FPO', 133701)")
 
+#austin2023
+cur.execute("insert into players values (53, 'cadenceburge', 'Cadence Burge', 'FPO', 76233)")
+cur.execute("insert into players values (54, 'emilyyale', 'Emily Yale', 'FPO', 144791)")
+cur.execute("insert into players values (55, 'carleakubicek', 'Carlea Kubicek', 'FPO', 186636)")
+#cur.execute("insert into players values (56, 'carolina""reaper""halstead', 'Carolina 'Reaper' Halstead', 'FPO', 113817)")
+cur.execute("insert into players values (54, 'rebeccaminnick', 'Rebecca Minnick', 'FPO', 170182)")
+cur.execute("insert into players values (54, 'jessicahopper', 'Jessica Hopper', 'FPO', 197708)")
+cur.execute("insert into players values (54, 'kimberlyhlava', 'Kimberly Hlava', 'FPO', 180525)")
+
 #
 # Commit Changes
 #
