@@ -7,7 +7,7 @@ cur = con.cursor()
 # Create Tables
 #
 cur.execute("drop table if exists roundPlayed")
-cur.execute("create table if not exists roundPlayed(tournamentName, playerName, roundNumber, sgTotal, sgTeeToGreen, sgPutting, sgCircle1X, sgCircle2, sgPenalties, primary key (tournamentName, playerName, roundNumber))")
+cur.execute("create table if not exists roundPlayed(tournamentName text, playerName text, roundNumber int, sgTotal real, sgTeeToGreen real, sgPutting real, sgCircle1X real, sgCircle2 real, sgPenalties real, primary key (tournamentName, playerName, roundNumber))")
 
 #
 # Populate Tables
