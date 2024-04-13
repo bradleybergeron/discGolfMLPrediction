@@ -81,7 +81,7 @@ for playerName in playerNames:
                 sgPenalties3 = 0 if sgPenalties[3] == '-' else float(sgPenalties[3])
 
                 #tournamentName, playerName, roundNumber, sgTotal, sgTeeToGreen, sgPutting, sgCircle1X, sgCircle2, sgPenalties
-                #cur.execute("delete from roundPlayed")
+                cur.execute("delete from roundPlayed")
                 cur.execute(f"insert into roundPlayed values ('{tournament[0]}', '{playerName[0]}', 1, {sgTotal1}, {sgTeeToGreen1}, {sgPutting1}, {sgC1X1}, {sgC21}, {sgPenalties1})")
                 cur.execute(f"insert into roundPlayed values ('{tournament[0]}', '{playerName[0]}', 2, {sgTotal2}, {sgTeeToGreen2}, {sgPutting2}, {sgC1X2}, {sgC22}, {sgPenalties2})")
                 cur.execute(f"insert into roundPlayed values ('{tournament[0]}', '{playerName[0]}', 3, {sgTotal3}, {sgTeeToGreen3}, {sgPutting3}, {sgC1X3}, {sgC23}, {sgPenalties3})")
@@ -109,7 +109,7 @@ for playerName in playerNames:
                 print(f"Tournament ({tournament[0]}) has an unprocessed number of rounds")
         except AttributeError:
             print(f"Player ({playerName[0]}) did not participate at this tournament ({tournament[0]})")
-            namesToReview.add([playerName[0], tournament[0]])
+            namesToReview.add((playerName[0], tournament[0]))
         finally:
             print("finally...")
         #except:

@@ -13,7 +13,34 @@ cur.execute("create table if NOT EXISTS players(id integer not null, udiscName t
 #
 # Populate Tables
 #
-###
+### 2023 season
+# lmo2022
+cur.execute("insert into players values (60, 'natalieryan', 'Natalie Ryan', 'FPO', 114560)")
+cur.execute("insert into players values (61, 'jamiehooverpeterson', 'Jamie Hoover Peterson', 'FPO', 160816)")
+cur.execute("insert into players values (62, 'whitneygraham', 'Whitney Graham', 'FPO', 131920)")
+cur.execute("insert into players values (63, 'autumngrace', 'Autumn Grace', 'FPO', 50514)")
+cur.execute("insert into players values (64, 'lorimerriman', 'Lori Merriman', 'FPO', 35616)")
+cur.execute("insert into players values (65, 'marybethreynolds', 'Mary Beth Reynolds', 'FPO', 134065)")
+cur.execute("insert into players values (66, 'katiemcerlean', 'Katie McErlean', 'FPO', 146797)")
+cur.execute("insert into players values (67, 'donnabarr', 'Donna Barr', 'FPO', 0)")
+cur.execute("insert into players values (68, 'erinsnapp', 'Erin Snapp', 'FPO', 49378)")
+
+### nwc2022
+cur.execute("insert into players values (68, 'morganlynds', 'Morgan Lynds', 'FPO', 176242)")
+cur.execute("insert into players values (68, 'chloealice', 'Chloe Alice', 'FPO', 85635)")
+cur.execute("insert into players values (68, 'lindsayfish', 'Lindsay Fish', 'FPO', 32925)")
+cur.execute("insert into players values (68, 'haleydehn', 'Haley Childs', 'FPO', 69197)")
+cur.execute("insert into players values (68, 'jordanlynds', 'Jordan Lynds', 'FPO', 176243)")
+cur.execute("insert into players values (68, 'emeliamarshall', 'Emelia Marshall', 'FPO', 177642)")
+cur.execute("insert into players values (68, 'eliezramidtlyng', 'Eliezra Midtlyng', 'FPO', 198446)")
+cur.execute("insert into players values (68, 'magdalenapope', 'Magdalena Pope', 'FPO', 130684)")
+cur.execute("insert into players values (68, 'sandygast', 'Sandy Gast', 'FPO', 6440)")
+cur.execute("insert into players values (68, 'abigailwilson', 'Abigail Wilson ', 'FPO', 197468)")
+cur.execute("insert into players values (68, 'trinitybryant', 'Trinity Bryant', 'FPO', 168863)")
+cur.execute("insert into players values (68, 'sashasmith', 'Sasha SMith', 'FPO', 203310)")
+
+
+### waco2023
 cur.execute("insert into players values (1, 'kristintattar', 'Kristin Tattar', 'FPO', 73986)")
 cur.execute("insert into players values (2, 'ohnscoggins', 'Ohn Scoggins', 'FPO', 48976)")
 cur.execute("insert into players values (3, 'missygannon', 'Missy Gannon', 'FPO', 85942)")
@@ -25,7 +52,7 @@ cur.execute("insert into players values (8, 'catrinaallen', 'Catrina Allen', 'FP
 cur.execute("insert into players values (9, 'sarahhokom', 'Sarah Hokom', 'FPO', 34563)")
 cur.execute("insert into players values (10, 'macievelediaz', 'Macie Velediaz', 'FPO', 104187)")
 cur.execute("insert into players values (11, 'annikenkristiansensteen', 'Anniken K. Steen', 'FPO', 109996)")
-cur.execute("insert into players values (12, 'deanndonaldson', '', 'FPO', 66842)")
+cur.execute("insert into players values (12, 'deanndonaldson', 'Deann Carey', 'FPO', 66842)")
 cur.execute("insert into players values (13, 'paigebjerkaas', 'Paige Shue', 'FPO', 33833)")
 cur.execute("insert into players values (14, 'lisafajkus', 'Lisa Fajkus', 'FPO', 32654)")
 cur.execute("insert into players values (15, 'alexismandujano', 'Alexis Mandujano', 'FPO', 62880)")
@@ -72,9 +99,9 @@ cur.execute("insert into players values (53, 'cadenceburge', 'Cadence Burge', 'F
 cur.execute("insert into players values (54, 'emilyyale', 'Emily Yale', 'FPO', 144791)")
 cur.execute("insert into players values (55, 'carleakubicek', 'Carlea Kubicek', 'FPO', 186636)")
 #cur.execute("insert into players values (56, 'carolina""reaper""halstead', 'Carolina 'Reaper' Halstead', 'FPO', 113817)")
-cur.execute("insert into players values (54, 'rebeccaminnick', 'Rebecca Minnick', 'FPO', 170182)")
-cur.execute("insert into players values (54, 'jessicahopper', 'Jessica Hopper', 'FPO', 197708)")
-cur.execute("insert into players values (54, 'kimberlyhlava', 'Kimberly Hlava', 'FPO', 180525)")
+cur.execute("insert into players values (57, 'rebeccaminnick', 'Rebecca Minnick', 'FPO', 170182)")
+cur.execute("insert into players values (58, 'jessicahopper', 'Jessica Hopper', 'FPO', 197708)")
+cur.execute("insert into players values (59, 'kimberlyhlava', 'Kimberly Hlava', 'FPO', 180525)")
 
 #
 # Commit Changes
