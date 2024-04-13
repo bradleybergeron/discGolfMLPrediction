@@ -1,29 +1,153 @@
 import sqlite3
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import re
+
+
 
 con = sqlite3.connect("data.db")
 cur = con.cursor()
+cur.execute("drop table if exists tournaments")
+cur.execute("create table if NOT EXISTS tournaments(id text primary key not null, name text not null, location text not null, dates text not null, year integer not null, rounds integer not null, tour text not null)")
 
-###
-### Can also populate from: https://udisclive.com/schedule
-###
 
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
+driver = webdriver.Chrome()
+
+uDiscLiveURL = f"https://udisclive.com/schedule"
+print(uDiscLiveURL)
+
+driver.get(uDiscLiveURL)
+
+elem = WebDriverWait(driver, 30).until(
+    EC.presence_of_element_located((By.ID, "react-root"))
+)
+time.sleep(2)
+
+yearsOfData = ["2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"]
+
+for year in yearsOfData:
+    buttonYear = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, "//button"))
+    )
+    buttonYear.click()
+    time.sleep(2)
+
+    yearToClick = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, f"//span[@role='menuitem']/div/div/div[contains(string(), {year})]"))
+    )
+    yearToClick.click()
+    time.sleep(5)
+    #<span role="menuitem"><div><div><div>2022</div></div></div></span>
+
+    ul = driver.find_elements(By.XPATH, "//div[@class='sm:flex-1']/ul[@class='flex flex-col divide-y divide-divider ']/li")
+    print(f"{year} - {len(ul)}")
+    for li in ul:
+        #
+        # eventID
+        #
+        eventID = li.find_element(By.XPATH, ".//a").get_attribute("href")[27::]
+
+        #
+        # eventName
+        #
+        eventName = li.find_element(By.XPATH, ".//a/div/div[2]/div/div/div[1]").text
+
+        #
+        # eventDates
+        #
+        eventDates = li.find_element(By.XPATH, ".//a/div/div[2]/div/div[2]/div").text
+
+        #
+        # eventYear
+        #
+        eventYear = year
+
+        #
+        # eventLocation
+        #
+        eventLocation = li.find_element(By.XPATH, ".//a/div/div[2]/div/div[3]/div[2]").text
+
+        #
+        # eventRounds
+        #
+        eventRounds = 0
+
+        #
+        # eventTour
+        #
+        eventTour = "Unknown"
+        eventTourImage = li.find_element(By.XPATH, ".//a/div/div[2]/div[2]/div/img").get_attribute("src")
+        if "silver_badge" in eventTourImage:
+            eventTour = "DGPT Silver"
+        elif "elite_x_badge" in eventTourImage:
+            eventTour = "DGPT Exhibition"
+        elif "elite_badge" in eventTourImage:
+            eventTour = "DGPT Elite"
+        elif "pdga-logo-blue-sg" in eventTourImage:
+            eventTour = "PDGA"
+        elif "ept_2023_badge" in eventTourImage:
+            eventTour = "EPT"
+        elif "pdpt_2023_badge" in eventTourImage:
+            eventTour = "PDPT"
+        elif "euro_tour_2023_badge" in eventTourImage:
+            eventTour = "EURO"
+        elif "nidaros-logo" in eventTourImage:
+            eventTour = "Nidaros"
+        elif "presidents_cup_2023_badge" in eventTourImage:
+            eventTour = "Presidents Cup"
+        elif "eo-white-rounded" in eventTourImage:
+            eventTour = "European Open"
+        elif "fdga-small" in eventTourImage:
+            eventTour = "Finnish Nationals"
+        elif "canadiannats" in eventTourImage:
+            eventTour = "Canadian Championships"
+        elif "edgc-logo" in eventTourImage:
+            eventTour = "EDGC"
+        elif "usdgc" in eventTourImage:
+            eventTour = "USDGC"
+        elif "tpwdgc" in eventTourImage:
+            eventTour = "TPWDGC"
+        elif "dgpt_2023_playoffs_badge" in eventTourImage:
+            eventTour = "DGPT Playoffs"
+
+        print(f"eventID: {eventID}")
+        print(f"eventName: {eventName}")
+        print(f"eventDates: {eventDates}")
+        print(f"eventYear: {eventYear}")
+        print(f"eventLocation: {eventLocation}")
+        print(f"eventRounds: {eventRounds}")
+        print(f"eventTour: {eventTour}")
+
+        eventName = eventName.replace("'", "''")
+        eventLocation = eventLocation.replace("'", "''")
+
+        #
+        # Add record to database
+        #
+        # id, name, location, dates, year, rounds, tour
+
+        cur.execute(f"insert into tournaments values ('{eventID}', '{eventName}', '{eventLocation}', '{eventDates}', {eventYear}, {eventRounds}, '{eventTour}')")
 
 #
 # Create Tables
 #
-cur.execute("drop table if exists tournaments")
-cur.execute("create table if NOT EXISTS tournaments(id integer not null, udiscName primary key not null, name text not null, location text not null, date text not null, year integer not null, rounds integer not null)")
+#cur.execute("drop table if exists tournaments")
+#cur.execute("create table if NOT EXISTS tournaments(id integer not null, udiscName primary key not null, name text not null, location text not null, date text not null, year integer not null, rounds integer not null)")
 
 #
 # Populate Tables
 #
 ###
-cur.execute("insert into tournaments values (1, 'lmo2022', 'Lake Marshall Open', 'Lake Marshall, VA', 'Oct 28-30', 2022, 3)")
-cur.execute("insert into tournaments values (2, 'nwc2022', 'New World Championship', 'Jacksonville, FL', 'Nov 11-13', 2022, 3)")
+#cur.execute("insert into tournaments values (1, 'lmo2022', 'Lake Marshall Open', 'Lake Marshall, VA', 'Oct 28-30', 2022, 3)")
+#cur.execute("insert into tournaments values (2, 'nwc2022', 'New World Championship', 'Jacksonville, FL', 'Nov 11-13', 2022, 3)")
 #cur.execute("insert into tournaments values (3, 'allstars2023', 'DGPT All-Stars', 'Tucson, Az', 'Feb 17-19', 2023, 3)")
 #cur.execute("insert into tournaments values (4, 'lvc2023', 'Las Vegas Challenge Presented by Innova', 'Henderson, NV', 'Feb 23-26', 2023, 4)")
-cur.execute("insert into tournaments values (5, 'waco2023', 'Prodigy Presents WACO', 'Waco, TX', 'Mar 10-12', 2023, 3)")
-cur.execute("insert into tournaments values (6, 'austin2023', 'The Open at Austin', 'Austin, TX', 'Mar 17-19', 2023, 3)")
+#cur.execute("insert into tournaments values (5, 'waco2023', 'Prodigy Presents WACO', 'Waco, TX', 'Mar 10-12', 2023, 3)")
+#cur.execute("insert into tournaments values (6, 'austin2023', 'The Open at Austin', 'Austin, TX', 'Mar 17-19', 2023, 3)")
 #cur.execute("insert into tournaments values (7, 'txstates2023', 'Innova Open at the 28th Annual Texas Sates', 'Houstan, TX', 'Mar 24-26', 2023, 3)")
 #cur.execute("insert into tournaments values (8, 'musiccity2023', 'Music City Open', 'Nashville, TN', 'Apr 7-9', 2023, 3)")
 #cur.execute("insert into tournaments values (9, 'blueridge2023', 'Innova Blue Ridge Championship at North Cove', 'Marion, NC', 'Apr 14-16', 2023, 3)")

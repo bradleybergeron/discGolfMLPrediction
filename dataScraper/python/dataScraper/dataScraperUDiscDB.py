@@ -1,21 +1,18 @@
 import pandas as pd
-import requests
-from pandas._typing import TimeUnit
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import sqlite3
+import time
+import re
+
 
 con = sqlite3.connect("data.db")
 #con.row_factory = lambda cursor, row: row[0]
 cur = con.cursor()
 
 pd.set_option('display.max_columns', None)
-import time
-import numpy as np
-import re
 
 playerNames = cur.execute("select udiscname from players").fetchall()
 tournaments = cur.execute("select udiscname, rounds from tournaments").fetchall()
