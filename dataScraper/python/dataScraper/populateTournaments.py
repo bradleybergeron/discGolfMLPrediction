@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import re
 
-
+debug = False
 
 con = sqlite3.connect("data.db")
 cur = con.cursor()
@@ -18,7 +18,8 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleW
 driver = webdriver.Chrome()
 
 uDiscLiveURL = f"https://udisclive.com/schedule"
-print(uDiscLiveURL)
+if debug:
+    print(uDiscLiveURL)
 
 driver.get(uDiscLiveURL)
 
@@ -44,7 +45,9 @@ for year in yearsOfData:
     #<span role="menuitem"><div><div><div>2022</div></div></div></span>
 
     ul = driver.find_elements(By.XPATH, "//div[@class='sm:flex-1']/ul[@class='flex flex-col divide-y divide-divider ']/li")
-    print(f"{year} - {len(ul)}")
+    if debug:
+        print(f"{year} - {len(ul)}")
+
     for li in ul:
         #
         # eventID
@@ -113,14 +116,17 @@ for year in yearsOfData:
             eventTour = "TPWDGC"
         elif "dgpt_2023_playoffs_badge" in eventTourImage:
             eventTour = "DGPT Playoffs"
+        else:
+            print(f"Unknown Tournament Tour: {eventID} - {eventName}")
 
-        print(f"eventID: {eventID}")
-        print(f"eventName: {eventName}")
-        print(f"eventDates: {eventDates}")
-        print(f"eventYear: {eventYear}")
-        print(f"eventLocation: {eventLocation}")
-        print(f"eventRounds: {eventRounds}")
-        print(f"eventTour: {eventTour}")
+        if debug:
+            print(f"eventID: {eventID}")
+            print(f"eventName: {eventName}")
+            print(f"eventDates: {eventDates}")
+            print(f"eventYear: {eventYear}")
+            print(f"eventLocation: {eventLocation}")
+            print(f"eventRounds: {eventRounds}")
+            print(f"eventTour: {eventTour}")
 
         eventName = eventName.replace("'", "''")
         eventLocation = eventLocation.replace("'", "''")
@@ -130,7 +136,8 @@ for year in yearsOfData:
         #
         # id, name, location, dates, year, rounds, tour
 
-        cur.execute(f"insert into tournaments values ('{eventID}', '{eventName}', '{eventLocation}', '{eventDates}', {eventYear}, {eventRounds}, '{eventTour}')")
+        if eventID not in ('belgianopen2021', 'celebproam2021'):
+            cur.execute(f"insert into tournaments values ('{eventID}', '{eventName}', '{eventLocation}', '{eventDates}', {eventYear}, {eventRounds}, '{eventTour}')")
 
 #
 # Create Tables

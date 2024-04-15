@@ -1,4 +1,13 @@
 import sqlite3
+from selenium import webdriver
+from selenium.common import TimeoutException, StaleElementReferenceException, NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import re
+
+debug = True
 
 con = sqlite3.connect("data.db")
 cur = con.cursor()
@@ -7,158 +16,76 @@ cur = con.cursor()
 # Create Tables
 #
 cur.execute("drop table if exists tournamentPlayed")
-cur.execute("create table if not exists tournamentPlayed(tournamentName text not null, playerName text not null, place integer not null, primary key (tournamentName, playerName), foreign key (tournamentName) references tournaments(udiscname), foreign key (playerName) references players(udiscname))")
+cur.execute("create table if not exists tournamentPlayed(tournamentID text not null, playerID text not null, division text not null, place integer not null, primary key (tournamentID, playerID), foreign key (tournamentID) references tournaments(id), foreign key (playerID) references players(id))")
+
+
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
+driver = webdriver.Chrome()
 
 #
-# Populate Tables
+# Get Tournament IDs
 #
-# lmo2022
-cur.execute("insert into tournamentPlayed values ('lm02022', 'macievelediaz', 1)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'sarahhokom', 2)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'natalieryan', 2)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'hollyfinley', 4)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'jamiehooverpeterson', 5)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'kelleyfoster', 6)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'whitneygraham', 7)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'autumngrace', 8)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'lorimerriman', 9)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'marybethreynolds', 10)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'katiemcerlean', 11)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'donnabarr', 12)")
-cur.execute("insert into tournamentPlayed values ('lm02022', 'erinsnapp', 12)")
+tournamentIDs = cur.execute("select id from tournaments").fetchall()
 
-# nwc2022
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'mariaoliva', 1)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'deanndonaldson', 2)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'jessicaweese', 3)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'sarahhokom', 3)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'hollyfinley', 5)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'ariacastruita', 6)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'morganlynds', 7)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'chloealice', 8)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'lindsayfish', 9)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'emilybeach', 10)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'haleydehn', 11)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'jordanlynds', 12)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'melodycastruita', 13)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'emeliamarshall', 14)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'eliezramidtlyng', 14)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'magdalenapope', 16)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'sandygast', 17)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'abigailwilson', 18)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'trinitybryant', 18)")
-cur.execute("insert into tournamentPlayed values ('nwc2022', 'sashasmith', 20)")
+if debug:
+    print(f"tournamentIDs: {tournamentIDs}")
 
-# waco2023
-cur.execute("insert into tournamentPlayed values ('waco2023', 'kristintattar', 1)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'ellahansen', 2)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'ohnscoggins', 3)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'sarahhokom', 4)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'haileyking', 5)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'annikensteen', 5)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'deanndonaldson', 5)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'kathrynmertsch', 8)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'paigeshu', 8)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'catrinaallen', 10)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'macievelediaz', 11)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'lisafajkus', 11)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'alexismandujano', 13)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'julianakorver', 14)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'hennablomroos', 14)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'hollyfinley', 16)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'ariacastruita', 16)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'jessicaweese', 16)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'paigepierce', 16)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'missygannon', 16)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'holynhandley', 21)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'rebeccacox', 21)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'mariaoliva', 21)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'erikastinchcomb', 21)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'alismith', 25)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'saiananda', 25)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'madisonwalker', 27)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'cynthiaricciotti', 27)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'carolinehenderson', 29)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'caseypennington', 30)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'lykkelorentzen', 31)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'hannahuynh', 32)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'lydiacochran', 32)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'stephanievincent', 32)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'stacierawnsley', 35)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'staciekiefer', 35)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'ravenklein', 35)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'vanessavandyken', 35)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'leahtsinajinnie', 39)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'eveliinasalonen', 40)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'keititatte', 40)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'jillnorwick', 42)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'emilybeach', 42)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'shiruliu', 44)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'danikleidon', 45)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'kelleyfoster', 46)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'krissiefountain', 46)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'alexiskerman', 48)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'ratanameekham', 49)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'melodycastruita', 50)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'madisontomaino', 51)")
-cur.execute("insert into tournamentPlayed values ('waco2023', 'nathalieortiz', 52)")
+for tournamentID in tournamentIDs:
+    if debug:
+        print(f"tournamentID: {tournamentID[0]}")
 
-#
-# austin2023
-#
-cur.execute("insert into tournamentPlayed values ('austin2023', 'paigepierce', 1)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'catrinaallen', 2)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'jessicaweese', 3)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'missygannon', 3)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'holynhandley', 5)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'kristintattar', 5)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'eveliinasalonen', 7)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'ellahansen', 7)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'saiananda', 9)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'hennablomroos', 9)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'kathrynmertsch', 11)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'carolinehenderson', 12)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'vanessavandyken', 13)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'mariaoliva', 14)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'ohnscoggins', 15)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'sarahhokom', 16)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'lisafajkus', 16)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'keititatte', 18)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'hollyfinley', 19)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'alexismandujano', 19)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'macievelediaz', 21)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'emilybeach', 21)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'haileyking', 23)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'rebeccacox', 24)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'stacierawnsley', 25)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'ariacastruita', 26)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'hannahuynh', 26)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'alismith', 26)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'deanndonaldson', 29)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'jillnorwick', 29)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'annikensteen', 31)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'cynthiaricciotti', 32)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'lykkelorentzen', 32)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'madisonwalker', 34)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'erikastinchcomb', 35)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'ravenklein', 35)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'ratanameekham', 35)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'stephanievincent', 38)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'leahtsinajinnie', 39)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'caseypennington', 39)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'cadenceburge', 41)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'madisontomaino', 42)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'emilyyale', 43)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'melodycastruita', 43)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'carleakubicek', 43)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'nathalieortiz', 46)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'danikleidon', 46)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'krissiefountain', 46)")
-#cur.execute("insert into tournamentPlayed values ('austin2023', 'carolina""reaper""halstead', 46)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'rebeccaminnick', 50)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'kelleyfoster', 51)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'jessicahopper', 52)")
-cur.execute("insert into tournamentPlayed values ('austin2023', 'kimberlyhlava', 53)")
+    driver.get(f"https://udisclive.com/live/{tournamentID[0]}")
+    time.sleep(2)
+
+    for div in ("MPO", "FPO"):
+        #
+        # Click {div} Link
+        #
+        driver.get(f"https://udisclive.com/live/{tournamentID[0]}/?d={div}")
+        time.sleep(2)
+
+        if driver.current_url != f"https://udisclive.com/live/{tournamentID[0]}/?d={div}":
+            print(f"Could not find {div} division for tournament: {tournamentID[0]}")
+            continue
+
+        try:
+            WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, "//div[@id='main-content']/div/div[2]/div[3]/div"))
+            )
+
+            rows = driver.find_elements(By.XPATH, "//div[@id='main-content']/div/div[2]/div[3]/div")
+            if debug:
+                print(f"num players: {len(rows)}")
+
+            for row in rows:
+                try:
+                    WebDriverWait(driver, 5).until(
+                        EC.presence_of_element_located((By.XPATH, "//div/div"))
+                    )
+
+                    placement = row.find_element(By.XPATH, ".//div/div").text.split("\n", 1)[0].replace('T', '')
+                    nameLink = row.find_element(By.XPATH, ".//div/div[2]/span[2]")
+                    nameLink.click()
+                    playerIDURL = row.find_element(By.XPATH, ".//div[2]/div/a").get_attribute("href")
+                    questionMarkLocation = playerIDURL.index("?")
+                    playerID = playerIDURL[30:questionMarkLocation:]
+
+                    if debug:
+                        print(f"placement: {placement}")
+                        print(f"playerID: {playerID}")
+
+                    # tournamentName text not null, playerName text not null, place integer not null
+                    if tournamentID[0] == '' or playerID == '' or placement == '':
+                        print("Incomplete data, unable to add to database")
+                        print(f"tournamentID: {tournamentID[0]}, playerID: {playerID}, div: {div}, placement: {placement}")
+                    else:
+                        print("Inserting data into database...")
+                        cur.execute(f"insert into tournamentPlayed values (?, ?, ?, ?)", (str(tournamentID[0]), str(playerID), str(div), str(placement)))
+                except NoSuchElementException:
+                    print(f"Likely processing an ad row")
+
+        except TimeoutException:
+            print(f"No data found for tournament: {tournamentID[0]}")
 
 #
 # Commit
