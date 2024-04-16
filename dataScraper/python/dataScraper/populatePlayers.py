@@ -1,6 +1,7 @@
 import sqlite3
 from selenium import webdriver
 from selenium.common import TimeoutException, StaleElementReferenceException, NoSuchElementException
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -24,7 +25,11 @@ cur.execute("create table if NOT EXISTS players(id text not null primary key, na
 players = cur.execute("select distinct playerID, division from tournamentPlayed").fetchall()
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
-driver = webdriver.Chrome()
+options = Options()
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+driver = webdriver.Chrome(options)
+
 time.sleep(2)
 
 if debug:
@@ -47,7 +52,7 @@ for player in players:
 
     cur.execute("insert into players values (?, ?, ?, ?)", (str(player[0]), str(playerName), str(playerDivision), str(playerPDGANumber)))
 
-#
-# Commit Changes
-#
-con.commit()
+    #
+    # Commit Changes
+    #
+    con.commit()
