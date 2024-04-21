@@ -1,12 +1,13 @@
 import sqlite3
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import re
 
-debug = False
+debug = True
 
 con = sqlite3.connect("data.db")
 cur = con.cursor()
@@ -118,6 +119,39 @@ for year in yearsOfData:
             eventTour = "DGPT Playoffs"
         else:
             print(f"Unknown Tournament Tour: {eventID} - {eventName}")
+
+        #
+        # Fetch Number of Rounds
+        #
+        driver2 = webdriver.Chrome()
+        driver2.get(f"https://udisclive.com/live/{eventID}")
+        time.sleep(2)
+
+        try:
+            round1 = driver2.find_element(By.XPATH, "//button/div/span[contains(string(), 'Round 1')]")
+            eventRounds += 1
+        except NoSuchElementException:
+            print(f"Failed to find Round 1 for tournament: {eventID}")
+        try:
+            round2 = driver2.find_element(By.XPATH, "//button/div/span[contains(string(), 'Round 2')]")
+            eventRounds += 1
+        except NoSuchElementException:
+            print(f"Failed to find Round 2 for tournament: {eventID}")
+        try:
+            round3 = driver2.find_element(By.XPATH, "//button/div/span[contains(string(), 'Round 3')]")
+            eventRounds += 1
+        except NoSuchElementException:
+            print(f"Failed to find Round 3 for tournament: {eventID}")
+        try:
+            round4 = driver2.find_element(By.XPATH, "//button/div/span[contains(string(), 'Round 4')]")
+            eventRounds += 1
+        except NoSuchElementException:
+            print(f"Failed to find Round 4 for tournament: {eventID}")
+        #try:
+        #    round4 = driver2.find_element(By.XPATH, "//button/div/span[contains(string(), 'PLAYOFF')]")
+        #    eventRounds += 1
+        #except NoSuchElementException:
+        #    print(f"Failed to find Playoffs for tournament: {eventID}")
 
         if debug:
             print(f"eventID: {eventID}")

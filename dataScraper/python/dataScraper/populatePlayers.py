@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import re
 
-debug = False
+debug = True
 
 con = sqlite3.connect("data.db")
 cur = con.cursor()
